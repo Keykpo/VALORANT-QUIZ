@@ -78,6 +78,14 @@
         <h2>Game Modes</h2>
 
         <div class="menu-section">
+            <h3 class="menu-section-title">DAILY CHALLENGE</h3>
+            <ul class="menu-options">
+                <li><a href="#" data-mode="daily-ranked">🏆 Daily Ranked</a></li>
+                <li><a href="#" data-mode="ranking">🏅 Ranking</a></li>
+            </ul>
+        </div>
+
+        <div class="menu-section">
             <h3 class="menu-section-title">SMASH OR PASS</h3>
             <ul class="menu-options">
                 <li><a href="#" data-mode="smash-or-pass-agents">⚡ Agents</a></li>
@@ -343,6 +351,96 @@
                 </div>
             </div>
         </div>
+
+        <!-- Daily Ranked Mode -->
+        <div class="daily-ranked-container" id="dailyRankedContainer" style="display: none;">
+            <div class="quiz-card">
+                <h2>🏆 DAILY RANKED</h2>
+                <p class="quiz-subtitle">Complete 4 challenges and climb the leaderboard!</p>
+
+                <!-- Today's Challenges -->
+                <div class="daily-challenges" id="dailyChallenges">
+                    <h3>Today's Challenges</h3>
+                    <p class="daily-date" id="dailyDate"></p>
+                    <div class="challenges-list" id="challengesList"></div>
+                </div>
+
+                <!-- Start Button -->
+                <div class="daily-start-section" id="dailyStartSection">
+                    <button class="btn btn-restart" id="startDailyBtn">START DAILY RANKED</button>
+                </div>
+
+                <!-- Already Played -->
+                <div class="already-played" id="alreadyPlayed" style="display: none;">
+                    <h3>✓ Challenge Complete!</h3>
+                    <p>You've already played today's ranked challenges.</p>
+                    <p class="your-score">Your Score: <span id="yourTodayScore">0</span> pts</p>
+                    <div class="rank-display">
+                        <div class="rank-icon" id="yourRankIcon"></div>
+                        <div class="rank-name" id="yourRankName"></div>
+                    </div>
+                    <button class="btn btn-restart" id="viewRankingBtn">VIEW RANKING</button>
+                </div>
+
+                <!-- In Progress -->
+                <div class="daily-progress-section" id="dailyProgressSection" style="display: none;">
+                    <div class="progress-header">
+                        <h3>Challenge <span id="currentChallenge">1</span> / 4</h3>
+                        <div class="score-display">Score: <span id="dailyScore">0</span> pts</div>
+                    </div>
+                    <div class="current-challenge-name" id="currentChallengeName"></div>
+                    <div id="dailyChallengeContent"></div>
+                </div>
+
+                <!-- Complete -->
+                <div class="daily-complete-section" id="dailyCompleteSection" style="display: none;">
+                    <h3>🎉 DAILY RANKED COMPLETE!</h3>
+                    <div class="final-score-display">
+                        <p>Final Score</p>
+                        <h2 id="finalDailyScore">0</h2>
+                    </div>
+                    <div class="rank-achievement">
+                        <div class="rank-icon-large" id="finalRankIcon"></div>
+                        <div class="rank-name-large" id="finalRankName"></div>
+                    </div>
+                    <div class="username-section">
+                        <input type="text" id="usernameInput" placeholder="Enter your username..." maxlength="20">
+                        <button class="btn btn-guess" id="submitScoreBtn">SUBMIT TO RANKING</button>
+                    </div>
+                    <button class="btn btn-restart" id="viewRankingFromCompleteBtn">VIEW RANKING</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ranking Board -->
+        <div class="ranking-container" id="rankingContainer" style="display: none;">
+            <div class="quiz-card">
+                <h2>🏅 RANKING</h2>
+                <p class="quiz-subtitle">Top players of the day</p>
+
+                <div class="ranking-date-nav">
+                    <button class="date-nav-btn" id="prevDateBtn">◀ Previous</button>
+                    <div class="ranking-current-date" id="rankingCurrentDate"></div>
+                    <button class="date-nav-btn" id="nextDateBtn">Next ▶</button>
+                </div>
+
+                <div class="ranking-table">
+                    <div class="ranking-header">
+                        <div class="rank-col">Rank</div>
+                        <div class="player-col">Player</div>
+                        <div class="score-col">Score</div>
+                        <div class="tier-col">Tier</div>
+                    </div>
+                    <div class="ranking-list" id="rankingList">
+                        <div class="no-scores">
+                            <p>No scores yet for this day</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-restart" id="backToMenuBtn">BACK TO MENU</button>
+            </div>
+        </div>
     </div>
 
     <!-- Loading Indicator -->
@@ -350,6 +448,10 @@
         <div class="loading-spinner"></div>
         <p>Loading...</p>
     </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <!-- Script -->
     <script src="script.js"></script>
