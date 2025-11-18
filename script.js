@@ -74,7 +74,7 @@ const agentQuotes = {
         "Efficiency is elegant."
     ],
     'Breach': [
-        "Here comes the party!",
+        "Clear the way!",
         "Who needs a door?",
         "Breaking through!",
         "Nothing stops me!"
@@ -196,27 +196,70 @@ async function loadAllData() {
     try {
         // Load agents
         const agentsResponse = await fetch(`${API_BASE}/agents?language=${API_LANG}&isPlayableCharacter=true`);
+        if (!agentsResponse.ok) {
+            throw new Error(`Failed to load agents: ${agentsResponse.status}`);
+        }
         const agentsData = await agentsResponse.json();
-        gameState.agents = agentsData.data.filter(agent => agent.isPlayableCharacter);
+
+        // Validate and filter agents
+        if (!agentsData || !agentsData.data || !Array.isArray(agentsData.data)) {
+            throw new Error('Invalid agents data received from API');
+        }
+        gameState.agents = agentsData.data.filter(agent =>
+            agent && agent.isPlayableCharacter && agent.displayName
+        );
 
         // Load weapons
         const weaponsResponse = await fetch(`${API_BASE}/weapons?language=${API_LANG}`);
+        if (!weaponsResponse.ok) {
+            throw new Error(`Failed to load weapons: ${weaponsResponse.status}`);
+        }
         const weaponsData = await weaponsResponse.json();
-        gameState.weapons = weaponsData.data;
+
+        // Validate weapons data
+        if (!weaponsData || !weaponsData.data || !Array.isArray(weaponsData.data)) {
+            throw new Error('Invalid weapons data received from API');
+        }
+        gameState.weapons = weaponsData.data.filter(weapon =>
+            weapon && weapon.displayName && weapon.displayIcon
+        );
 
         // Load maps
         const mapsResponse = await fetch(`${API_BASE}/maps?language=${API_LANG}`);
+        if (!mapsResponse.ok) {
+            throw new Error(`Failed to load maps: ${mapsResponse.status}`);
+        }
         const mapsData = await mapsResponse.json();
-        gameState.maps = mapsData.data;
 
-        console.log('Data loaded:', {
+        // Validate maps data
+        if (!mapsData || !mapsData.data || !Array.isArray(mapsData.data)) {
+            throw new Error('Invalid maps data received from API');
+        }
+        gameState.maps = mapsData.data.filter(map =>
+            map && map.displayName && map.splash
+        );
+
+        // Verify we have enough data to play
+        if (gameState.agents.length === 0) {
+            throw new Error('No agents loaded from API');
+        }
+        if (gameState.weapons.length === 0) {
+            throw new Error('No weapons loaded from API');
+        }
+        if (gameState.maps.length === 0) {
+            throw new Error('No maps loaded from API');
+        }
+
+        console.log('Data loaded successfully:', {
             agents: gameState.agents.length,
             weapons: gameState.weapons.length,
             maps: gameState.maps.length
         });
     } catch (error) {
         console.error('Error loading data:', error);
-        alert('Error loading VALORANT data. Please refresh the page.');
+        showLoading(false);
+        alert(`Error loading VALORANT data: ${error.message}\n\nPlease refresh the page to try again.`);
+        throw error; // Re-throw to prevent initialization
     }
 }
 
@@ -423,9 +466,33 @@ function startGuessAbility() {
 
 function loadNextAbilityQuestion() {
     // Get a random agent with abilities
-    const agentsWithAbilities = gameState.agents.filter(agent => agent.abilities && agent.abilities.length > 0);
+    const agentsWithAbilities = gameState.agents.filter(agent =>
+        agent.abilities &&
+        Array.isArray(agent.abilities) &&
+        agent.abilities.length > 0 &&
+        agent.abilities.some(ability => ability && ability.displayIcon && ability.displayName)
+    );
+
+    if (agentsWithAbilities.length === 0) {
+        console.error('No agents with valid abilities found');
+        alert('Unable to load ability quiz. Please try another game mode.');
+        return;
+    }
+
     const randomAgent = agentsWithAbilities[Math.floor(Math.random() * agentsWithAbilities.length)];
-    const randomAbility = randomAgent.abilities[Math.floor(Math.random() * randomAgent.abilities.length)];
+
+    // Get abilities with valid icons
+    const validAbilities = randomAgent.abilities.filter(ability =>
+        ability && ability.displayIcon && ability.displayName
+    );
+
+    if (validAbilities.length === 0) {
+        // Try another agent
+        loadNextAbilityQuestion();
+        return;
+    }
+
+    const randomAbility = validAbilities[Math.floor(Math.random() * validAbilities.length)];
 
     gameState.currentAnswer = randomAgent.displayName;
     gameState.attempts = 0;
@@ -435,6 +502,8 @@ function loadNextAbilityQuestion() {
     document.getElementById('abilityIcon').src = randomAbility.displayIcon;
     document.getElementById('abilityName').textContent = randomAbility.displayName;
     document.getElementById('abilityGuessInput').value = '';
+    document.getElementById('abilityGuessInput').disabled = false;
+    document.getElementById('abilityGuessBtn').disabled = false;
     document.getElementById('abilityAttempts').textContent = '0';
     document.getElementById('abilityAttemptsList').innerHTML = '';
     document.getElementById('abilityResult').textContent = '';
@@ -652,6 +721,8 @@ function startWeaponQuiz() {
     gameState.score = 0;
 
     document.getElementById('weaponQuizContainer').style.display = 'block';
+    document.getElementById('weaponScore').textContent = '0';
+    document.getElementById('weaponTotal').textContent = '0';
 
     loadNextWeaponQuestion();
 }
@@ -734,6 +805,8 @@ function startMapQuiz() {
     gameState.score = 0;
 
     document.getElementById('mapQuizContainer').style.display = 'block';
+    document.getElementById('mapScore').textContent = '0';
+    document.getElementById('mapTotal').textContent = '0';
 
     loadNextMapQuestion();
 }
@@ -850,10 +923,19 @@ function setupAutocomplete(inputId, dropdownId) {
         }
     });
 
+    // Close dropdown when pressing Enter
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            dropdown.classList.remove('active');
+            dropdown.innerHTML = '';
+        }
+    });
+
     // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
         if (!input.contains(e.target) && !dropdown.contains(e.target)) {
             dropdown.classList.remove('active');
+            dropdown.innerHTML = '';
         }
     });
 }
