@@ -1,0 +1,30 @@
+Console was cleared
+VM101:3 === DIAGNOSTICO ===
+VM101:5 1. dailyChallenges:
+VM101:6 ERROR: dailyChallenges is not defined
+VM101:8 2. Elementos:
+VM101:9 dailyRankedCard: SI
+VM101:10 backToModeSelection: SI
+VM101:12 3. Game Cards:
+VM101:13 Total: 13
+VM101:15 4. Click PLAY RANKED:
+init-fix.js:34 🎮 INIT-FIX: Daily Ranked clicked! PointerEvent {isTrusted: false, pointerId: -1, width: 1, height: 1, pressure: 0, …}
+script.js:7714 🏆 showDailyRotation() called
+script.js:7740 📋 displayTodayChallenges() called
+script.js:7741 Uncaught ReferenceError: Cannot access 'dailyChallenges' before initialization
+    at displayTodayChallenges (script.js:7741:41)
+    at showDailyRotation (script.js:7735:5)
+    at window.dailyRankedCard.onclick (init-fix.js:36:21)
+    at <anonymous>:17:13
+displayTodayChallenges @ script.js:7741
+showDailyRotation @ script.js:7735
+window.dailyRankedCard.onclick @ init-fix.js:36
+(anonymous) @ VM101:17Understand this error
+20
+VM101:18 Rotation visible? 500
+VM101:20 5. Click BACK:
+VM101:23 6. Click FREE:
+init-fix.js:46 🎮 INIT-FIX: Free Mode clicked! PointerEvent {isTrusted: false, pointerId: -1, width: 1, height: 1, pressure: 0, …}
+script.js:7784 🎮 showFreeMode() called
+VM101:26 7. Click Game Card:
+VM101:29 === FIN ===

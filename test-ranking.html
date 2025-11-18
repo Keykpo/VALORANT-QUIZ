@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Ranking - Logo Size</title>
+    <style>
+        body {
+            background: #0a1428;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            color: #F0E6D2;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(15, 30, 45, 0.8);
+            padding: 30px;
+            border-radius: 15px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #C8AA6E;
+            margin-bottom: 30px;
+        }
+
+        .size-controls {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(200, 170, 110, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .size-controls label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #C8AA6E;
+        }
+
+        .size-controls input {
+            width: 300px;
+            margin: 0 10px;
+        }
+
+        .size-value {
+            display: inline-block;
+            min-width: 50px;
+            font-weight: bold;
+            color: #FFD700;
+        }
+
+        .ranking-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .ranking-row {
+            display: grid;
+            grid-template-columns: 80px 2fr 120px 120px;
+            gap: 15px;
+            background: rgba(15, 30, 45, 0.5);
+            border: none;
+            border-radius: 10px;
+            padding: 20px 15px;
+            transition: all 0.3s ease;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 768px) {
+            .ranking-row {
+                grid-template-columns: 50px 1.5fr 80px 90px;
+                gap: 8px;
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .ranking-row {
+                grid-template-columns: 30px 1fr 45px 55px;
+                gap: 4px;
+                padding: 8px 6px;
+                font-size: 0.75rem;
+            }
+        }
+
+        .ranking-row:hover {
+            background: rgba(200, 170, 110, 0.1);
+        }
+
+        .ranking-row.top3 {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0.1) 100%);
+        }
+
+        .ranking-cell {
+            color: #F0E6D2;
+            font-weight: 600;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ranking-rank {
+            font-size: 1.2rem;
+            color: #C8AA6E;
+        }
+
+        .ranking-username {
+            text-align: left;
+            justify-content: flex-start;
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .ranking-points {
+            color: #FFD700;
+            font-weight: 700;
+        }
+
+        .ranking-time {
+            color: #89CFF0;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+
+        .player-rank {
+            display: inline-flex;
+            align-items: center;
+            gap: 0;
+            background: none;
+            color: transparent;
+            border: none;
+        }
+
+        .rank-icon {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+            margin: 0;
+            vertical-align: middle;
+            transition: all 0.2s ease;
+        }
+
+        @media (max-width: 768px) {
+            .rank-icon {
+                width: 100px;
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .rank-icon {
+                width: 90px;
+                height: 90px;
+            }
+        }
+
+        .player-name {
+            font-size: 1rem;
+            color: #F0E6D2;
+            font-weight: 600;
+        }
+
+        .ranking-username {
+            gap: 12px;
+        }
+
+        .ranking-time {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .player-name {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .player-name {
+                font-size: 0.7rem;
+            }
+
+            .ranking-time {
+                font-size: 0.65rem;
+            }
+
+            .ranking-rank {
+                font-size: 0.85rem;
+            }
+
+            .ranking-points {
+                font-size: 0.7rem;
+            }
+
+            .ranking-username {
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏅 TEST RANKING - LOGO SIZE</h1>
+
+        <div class="size-controls">
+            <label for="iconSize">Tamaño del Logo: <span class="size-value" id="sizeValue">100px</span></label>
+            <input type="range" id="iconSize" min="16" max="250" value="100" step="2">
+        </div>
+
+        <div class="ranking-list">
+            <!-- Top 3 -->
+            <div class="ranking-row top3">
+                <div class="ranking-cell ranking-rank">🥇 1</div>
+                <div class="ranking-cell ranking-username">
+                    <span class="player-rank">
+                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-emblem/emblem-challenger.png" alt="Challenger" class="rank-icon" />
+                    </span>
+                    <span class="player-name">Faker</span>
+                </div>
+                <div class="ranking-cell ranking-points">200 pts</div>
+                <div class="ranking-cell ranking-time">⏱️ 45s</div>
+            </div>
+
+            <div class="ranking-row top3">
+                <div class="ranking-cell ranking-rank">🥈 2</div>
+                <div class="ranking-cell ranking-username">
+                    <span class="player-rank">
+                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-emblem/emblem-grandmaster.png" alt="Grandmaster" class="rank-icon" />
+                    </span>
+                    <span class="player-name">Keykpo</span>
+                </div>
+                <div class="ranking-cell ranking-points">195 pts</div>
+                <div class="ranking-cell ranking-time">⏱️ 52s</div>
+            </div>
+
+            <div class="ranking-row top3">
+                <div class="ranking-cell ranking-rank">🥉 3</div>
+                <div class="ranking-cell ranking-username">
+                    <span class="player-rank">
+                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-emblem/emblem-master.png" alt="Master" class="rank-icon" />
+                    </span>
+                    <span class="player-name">Caps</span>
+                </div>
+                <div class="ranking-cell ranking-points">185 pts</div>
+                <div class="ranking-cell ranking-time">⏱️ 58s</div>
+            </div>
+
+            <!-- Rest -->
+            <div class="ranking-row">
+                <div class="ranking-cell ranking-rank">4</div>
+                <div class="ranking-cell ranking-username">
+                    <span class="player-rank">
+                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-emblem/emblem-diamond.png" alt="Diamond" class="rank-icon" />
+                    </span>
+                    <span class="player-name">Rekkles</span>
+                </div>
+                <div class="ranking-cell ranking-points">175 pts</div>
+                <div class="ranking-cell ranking-time">⏱️ 1m 05s</div>
+            </div>
+
+            <div class="ranking-row">
+                <div class="ranking-cell ranking-rank">5</div>
+                <div class="ranking-cell ranking-username">
+                    <span class="player-rank">
+                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-emblem/emblem-emerald.png" alt="Emerald" class="rank-icon" />
+                    </span>
+                    <span class="player-name">Perkz</span>
+                </div>
+                <div class="ranking-cell ranking-points">160 pts</div>
+                <div class="ranking-cell ranking-time">⏱️ 1m 12s</div>
+            </div>
+
+            <div class="ranking-row">
+                <div class="ranking-cell ranking-rank">6</div>
+                <div class="ranking-cell ranking-username">
+                    <span class="player-rank">
+                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-emblem/emblem-platinum.png" alt="Platinum" class="rank-icon" />
+                    </span>
+                    <span class="player-name">Jankos</span>
+                </div>
+                <div class="ranking-cell ranking-points">140 pts</div>
+                <div class="ranking-cell ranking-time">⏱️ 1m 20s</div>
+            </div>
+
+            <div class="ranking-row">
+                <div class="ranking-cell ranking-rank">7</div>
+                <div class="ranking-cell ranking-username">
+                    <span class="player-rank">
+                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-emblem/emblem-gold.png" alt="Gold" class="rank-icon" />
+                    </span>
+                    <span class="player-name">Broxah</span>
+                </div>
+                <div class="ranking-cell ranking-points">120 pts</div>
+                <div class="ranking-cell ranking-time">⏱️ 1m 35s</div>
+            </div>
+
+            <div class="ranking-row">
+                <div class="ranking-cell ranking-rank">8</div>
+                <div class="ranking-cell ranking-username">
+                    <span class="player-rank">
+                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-emblem/emblem-silver.png" alt="Silver" class="rank-icon" />
+                    </span>
+                    <span class="player-name">Bwipo</span>
+                </div>
+                <div class="ranking-cell ranking-points">80 pts</div>
+                <div class="ranking-cell ranking-time">⏱️ 2m 00s</div>
+            </div>
+
+            <div class="ranking-row">
+                <div class="ranking-cell ranking-rank">9</div>
+                <div class="ranking-cell ranking-username">
+                    <span class="player-rank">
+                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-emblem/emblem-bronze.png" alt="Bronze" class="rank-icon" />
+                    </span>
+                    <span class="player-name">Hylissang</span>
+                </div>
+                <div class="ranking-cell ranking-points">40 pts</div>
+                <div class="ranking-cell ranking-time">⏱️ 2m 15s</div>
+            </div>
+
+            <div class="ranking-row">
+                <div class="ranking-cell ranking-rank">10</div>
+                <div class="ranking-cell ranking-username">
+                    <span class="player-rank">
+                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-emblem/emblem-iron.png" alt="Iron" class="rank-icon" />
+                    </span>
+                    <span class="player-name">Wunder</span>
+                </div>
+                <div class="ranking-cell ranking-points">10 pts</div>
+                <div class="ranking-cell ranking-time">⏱️ 3m 00s</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const slider = document.getElementById('iconSize');
+        const sizeValue = document.getElementById('sizeValue');
+        const rankIcons = document.querySelectorAll('.rank-icon');
+
+        slider.addEventListener('input', function() {
+            const size = this.value + 'px';
+            sizeValue.textContent = size;
+
+            rankIcons.forEach(icon => {
+                icon.style.width = size;
+                icon.style.height = size;
+            });
+        });
+    </script>
+</body>
+</html>

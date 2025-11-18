@@ -1,0 +1,36 @@
+Uncaught TypeError: Cannot read properties of undefined (reading 'champion')
+    at script.js:6396:69
+    at Array.find (<anonymous>)
+    at HTMLButtonElement.initLoldleEmoji (script.js:6396:38)
+script.js:8150 Daily Run Challenge 3/4: ⚡ Ability loaded with seed 62280725
+script.js:5614 Error cargando habilidades: TypeError: Cannot read properties of undefined (reading 'id')
+    at HTMLButtonElement.initLoldleAbility (script.js:5568:143)
+initLoldleAbility @ script.js:5614
+script.js:8150 Daily Run Challenge 4/4: 🎯 Classic loaded with seed 62280724
+logger.ts:115 [2025-11-17T22:51:12.945Z]  @firebase/database: FIREBASE WARNING: set at /daily_ranking/2025-11-17/-OeJ-xyjnnID1HaHTJPt failed: permission_denied 
+q @ logger.ts:115
+script.js:7960 Error submitting score: Error: PERMISSIONDENIED: Permission denied
+    at Repo.ts:909:23
+    at Pe (util.ts:540:5)
+    at Ji (Repo.ts:899:5)
+    at Repo.ts:587:7
+    at PersistentConnection.ts:618:9
+    at gt.onDataMessage (PersistentConnection.ts:650:9)
+    at Ke.onDataMessage (Connection.ts:321:10)
+    at Ke.onPrimaryMessageReceived (Connection.ts:313:12)
+    at Qe.onMessage (Connection.ts:210:16)
+    at Qe.appendFrame_ (WebSocketConnection.ts:300:12)
+submitScoreToRanking @ script.js:7960
+logger.ts:115 [2025-11-17T22:51:16.796Z]  @firebase/database: FIREBASE WARNING: set at /daily_ranking/2025-11-17/-OeJ-yuwdnuByng_0YNh failed: permission_denied 
+q @ logger.ts:115
+script.js:7960 Error submitting score: Error: PERMISSIONDENIED: Permission denied
+    at Repo.ts:909:23
+    at Pe (util.ts:540:5)
+    at Ji (Repo.ts:899:5)
+    at Repo.ts:587:7
+    at PersistentConnection.ts:618:9
+    at gt.onDataMessage (PersistentConnection.ts:650:9)
+    at Ke.onDataMessage (Connection.ts:321:10)
+    at Ke.onPrimaryMessageReceived (Connection.ts:313:12)
+    at Qe.onMessage (Connection.ts:210:16)
+    at Qe.appendFrame_ (WebSocketConnection.ts:300:12)

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smash or Pass Redesign - Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #010A13 0%, #0A1428 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #F0E6D2;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #C8AA6E;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .test-section {
+            background: rgba(15, 30, 45, 0.6);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid #C8AA6E;
+        }
+
+        .section-title {
+            text-align: center;
+            color: #C8AA6E;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .section-description {
+            text-align: center;
+            color: #78A3AD;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        /* Común a todos los diseños */
+        .game-container {
+            background: linear-gradient(135deg, rgba(1, 10, 19, 0.95) 0%, rgba(5, 20, 30, 0.95) 100%);
+            border: 1px solid rgba(200, 170, 110, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            margin: 0 auto;
+            max-width: 500px;
+        }
+
+        .card {
+            text-align: center;
+        }
+
+        .team-logo {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            padding: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* DISEÑO 1: Compacto - Imagen 320px */
+        .design-1 .game-container {
+            padding: 20px;
+        }
+
+        .design-1 .player-image {
+            width: 100%;
+            height: 320px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .design-1 .player-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .design-1 .player-info h2 {
+            font-size: 1.6rem;
+            color: #F0E6D2;
+            margin-bottom: 8px;
+        }
+
+        .design-1 .player-info p {
+            font-size: 0.9rem;
+            color: #A09B8C;
+            margin-bottom: 4px;
+        }
+
+        .design-1 .buttons {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .design-1 .btn {
+            flex: 1;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s;
+        }
+
+        .design-1 .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .design-1 .btn span:first-child {
+            font-size: 1.5rem;
+        }
+
+        .design-1 .global-stats {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(200, 170, 110, 0.05);
+            border: 1px solid rgba(200, 170, 110, 0.2);
+            border-radius: 10px;
+        }
+
+        .design-1 .global-stats h3 {
+            color: #C8AA6E;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        /* DISEÑO 2: Ultra Compacto - Imagen 280px + Layout Horizontal en Stats */
+        .design-2 .game-container {
+            padding: 18px;
+        }
+
+        .design-2 .player-image {
+            width: 100%;
+            height: 280px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .design-2 .player-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .design-2 .player-info h2 {
+            font-size: 1.5rem;
+            color: #F0E6D2;
+            margin-bottom: 6px;
+        }
+
+        .design-2 .player-info p {
+            font-size: 0.85rem;
+            color: #A09B8C;
+            margin-bottom: 3px;
+        }
+
+        .design-2 .buttons {
+            display: flex;
+            gap: 12px;
+            margin: 12px 0;
+        }
+
+        .design-2 .btn {
+            flex: 1;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            transition: transform 0.2s;
+        }
+
+        .design-2 .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .design-2 .btn span:first-child {
+            font-size: 1.3rem;
+        }
+
+        .design-2 .global-stats {
+            margin-top: 12px;
+            padding: 12px;
+            background: rgba(200, 170, 110, 0.05);
+            border: 1px solid rgba(200, 170, 110, 0.2);
+            border-radius: 10px;
+        }
+
+        .design-2 .global-stats h3 {
+            color: #C8AA6E;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        /* DISEÑO 3: Muy Compacto - Imagen 250px + Info en línea */
+        .design-3 .game-container {
+            padding: 16px;
+        }
+
+        .design-3 .player-image {
+            width: 100%;
+            height: 250px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .design-3 .player-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .design-3 .player-info h2 {
+            font-size: 1.4rem;
+            color: #F0E6D2;
+            margin-bottom: 6px;
+        }
+
+        .design-3 .player-info p {
+            font-size: 0.8rem;
+            color: #A09B8C;
+            margin-bottom: 2px;
+        }
+
+        .design-3 .buttons {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .design-3 .btn {
+            flex: 1;
+            padding: 10px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            transition: transform 0.2s;
+        }
+
+        .design-3 .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .design-3 .btn span:first-child {
+            font-size: 1.2rem;
+        }
+
+        .design-3 .global-stats {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(200, 170, 110, 0.05);
+            border: 1px solid rgba(200, 170, 110, 0.2);
+            border-radius: 8px;
+        }
+
+        .design-3 .global-stats h3 {
+            color: #C8AA6E;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        /* Estilos comunes para botones */
+        .btn-pass {
+            background: linear-gradient(135deg, rgba(60, 20, 20, 0.9) 0%, rgba(100, 30, 30, 0.9) 100%);
+            border: 2px solid rgba(200, 80, 80, 0.5);
+            color: #F0E6D2;
+        }
+
+        .btn-smash {
+            background: linear-gradient(135deg, rgba(20, 60, 40, 0.9) 0%, rgba(30, 100, 60, 0.9) 100%);
+            border: 2px solid rgba(80, 200, 120, 0.5);
+            color: #F0E6D2;
+        }
+
+        /* Estilos comunes para stats */
+        .stats-bars {
+            margin-bottom: 10px;
+        }
+
+        .stat-bar {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+        }
+
+        .stat-label {
+            min-width: 80px;
+            color: #C8AA6E;
+            font-weight: 600;
+        }
+
+        .bar-container {
+            flex: 1;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .bar {
+            height: 100%;
+            transition: width 0.8s ease;
+        }
+
+        .bar-smash {
+            background: linear-gradient(90deg, rgba(30, 100, 60, 0.8) 0%, rgba(50, 150, 90, 0.9) 100%);
+        }
+
+        .bar-pass {
+            background: linear-gradient(90deg, rgba(100, 30, 30, 0.8) 0%, rgba(150, 50, 50, 0.9) 100%);
+        }
+
+        .stat-value {
+            min-width: 60px;
+            text-align: right;
+            color: #F0E6D2;
+            font-weight: 600;
+        }
+
+        .total-votes {
+            text-align: center;
+            color: #78A3AD;
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+
+        .counter {
+            text-align: center;
+            margin-top: 10px;
+            color: #78A3AD;
+            font-size: 0.9rem;
+        }
+
+        .note {
+            background: rgba(200, 170, 110, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            color: #C8AA6E;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Rediseño Smash or Pass</h1>
+
+        <!-- DISEÑO 1: COMPACTO -->
+        <div class="test-section design-1">
+            <div class="section-title">Diseño 1: Compacto (Imagen 320px)</div>
+            <div class="section-description">Reduce tamaño pero mantiene buena visibilidad</div>
+
+            <div class="game-container">
+                <div class="card">
+                    <div class="player-image">
+                        <img src="https://am-a.akamaihd.net/image?resize=375:&f=http%3A%2F%2Fstatic.lolesports.com%2Fplayers%2F1698434422529_FakerWorlds23Headshot-S.png" alt="Faker">
+                        <img class="team-logo" src="https://am-a.akamaihd.net/image?resize=70:&f=http%3A%2F%2Fstatic.lolesports.com%2Fteams%2F1631819614211_t1-2021-worlds.png" alt="T1">
+                    </div>
+                    <div class="player-info">
+                        <h2>Faker</h2>
+                        <p>Mid</p>
+                        <p>T1</p>
+                        <p>LCK</p>
+
+                        <div class="global-stats">
+                            <h3>Estadísticas Globales</h3>
+                            <div class="stats-bars">
+                                <div class="stat-bar">
+                                    <span class="stat-label">💚 SMASH</span>
+                                    <div class="bar-container">
+                                        <div class="bar bar-smash" style="width: 85%"></div>
+                                    </div>
+                                    <span class="stat-value">1250 (85%)</span>
+                                </div>
+                                <div class="stat-bar">
+                                    <span class="stat-label">❌ PASS</span>
+                                    <div class="bar-container">
+                                        <div class="bar bar-pass" style="width: 15%"></div>
+                                    </div>
+                                    <span class="stat-value">220 (15%)</span>
+                                </div>
+                            </div>
+                            <p class="total-votes">Total: 1470</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <button class="btn btn-pass">
+                        <span>❌</span>
+                        <span>PASS</span>
+                    </button>
+                    <button class="btn btn-smash">
+                        <span>💚</span>
+                        <span>SMASH</span>
+                    </button>
+                </div>
+
+                <div class="counter">
+                    <p>Player 1 of 50</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- DISEÑO 2: ULTRA COMPACTO -->
+        <div class="test-section design-2">
+            <div class="section-title">Diseño 2: Ultra Compacto (Imagen 280px) - RECOMENDADO</div>
+            <div class="section-description">Balance perfecto entre tamaño y funcionalidad, ideal para mobile y PC</div>
+
+            <div class="game-container">
+                <div class="card">
+                    <div class="player-image">
+                        <img src="https://am-a.akamaihd.net/image?resize=375:&f=http%3A%2F%2Fstatic.lolesports.com%2Fplayers%2F1698434422529_FakerWorlds23Headshot-S.png" alt="Faker">
+                        <img class="team-logo" src="https://am-a.akamaihd.net/image?resize=70:&f=http%3A%2F%2Fstatic.lolesports.com%2Fteams%2F1631819614211_t1-2021-worlds.png" alt="T1">
+                    </div>
+                    <div class="player-info">
+                        <h2>Faker</h2>
+                        <p>Mid</p>
+                        <p>T1</p>
+                        <p>LCK</p>
+
+                        <div class="global-stats">
+                            <h3>Estadísticas Globales</h3>
+                            <div class="stats-bars">
+                                <div class="stat-bar">
+                                    <span class="stat-label">💚 SMASH</span>
+                                    <div class="bar-container">
+                                        <div class="bar bar-smash" style="width: 85%"></div>
+                                    </div>
+                                    <span class="stat-value">1250 (85%)</span>
+                                </div>
+                                <div class="stat-bar">
+                                    <span class="stat-label">❌ PASS</span>
+                                    <div class="bar-container">
+                                        <div class="bar bar-pass" style="width: 15%"></div>
+                                    </div>
+                                    <span class="stat-value">220 (15%)</span>
+                                </div>
+                            </div>
+                            <p class="total-votes">Total: 1470</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <button class="btn btn-pass">
+                        <span>❌</span>
+                        <span>PASS</span>
+                    </button>
+                    <button class="btn btn-smash">
+                        <span>💚</span>
+                        <span>SMASH</span>
+                    </button>
+                </div>
+
+                <div class="counter">
+                    <p>Player 1 of 50</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- DISEÑO 3: MUY COMPACTO -->
+        <div class="test-section design-3">
+            <div class="section-title">Diseño 3: Muy Compacto (Imagen 250px)</div>
+            <div class="section-description">Máxima compactación, todo visible sin scroll</div>
+
+            <div class="game-container">
+                <div class="card">
+                    <div class="player-image">
+                        <img src="https://am-a.akamaihd.net/image?resize=375:&f=http%3A%2F%2Fstatic.lolesports.com%2Fplayers%2F1698434422529_FakerWorlds23Headshot-S.png" alt="Faker">
+                        <img class="team-logo" src="https://am-a.akamaihd.net/image?resize=70:&f=http%3A%2F%2Fstatic.lolesports.com%2Fteams%2F1631819614211_t1-2021-worlds.png" alt="T1">
+                    </div>
+                    <div class="player-info">
+                        <h2>Faker</h2>
+                        <p>Mid • T1 • LCK</p>
+
+                        <div class="global-stats">
+                            <h3>Stats Globales</h3>
+                            <div class="stats-bars">
+                                <div class="stat-bar">
+                                    <span class="stat-label">💚 SMASH</span>
+                                    <div class="bar-container">
+                                        <div class="bar bar-smash" style="width: 85%"></div>
+                                    </div>
+                                    <span class="stat-value">1250 (85%)</span>
+                                </div>
+                                <div class="stat-bar">
+                                    <span class="stat-label">❌ PASS</span>
+                                    <div class="bar-container">
+                                        <div class="bar bar-pass" style="width: 15%"></div>
+                                    </div>
+                                    <span class="stat-value">220 (15%)</span>
+                                </div>
+                            </div>
+                            <p class="total-votes">Total: 1470</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <button class="btn btn-pass">
+                        <span>❌</span>
+                        <span>PASS</span>
+                    </button>
+                    <button class="btn btn-smash">
+                        <span>💚</span>
+                        <span>SMASH</span>
+                    </button>
+                </div>
+
+                <div class="counter">
+                    <p>Player 1 of 50</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="note">
+            📱 <strong>Recomendación:</strong> El <strong>Diseño 2 (280px)</strong> es el más equilibrado - elimina el scroll en mobile y PC sin sacrificar la experiencia visual.
+            <br><br>
+            🖥️ Todos los diseños están optimizados para evitar scroll horizontal en cualquier dispositivo.
+        </div>
+    </div>
+</body>
+</html>

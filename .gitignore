@@ -1,0 +1,44 @@
+# Node modules
+node_modules/
+npm-debug.log*
+
+# Firebase Config (contains sensitive keys)
+firebase-config.js
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.cache
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build files (if any)
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+
+# Downloaded images cache (optional - uncomment if images are too large for git)
+# images/
+# flags/
+
+# Backup files
+*.bak
+*.backup
+
+# Testing files
+test-*.js
+download-*.js

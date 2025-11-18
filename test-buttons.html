@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Button Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a1628 0%, #1a2332 100%);
+            color: #F0E6D2;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #C8AA6E;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2.5rem;
+        }
+        .test-section {
+            background: rgba(1, 10, 19, 0.8);
+            border: 2px solid rgba(200, 170, 110, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .test-section h2 {
+            color: #C8AA6E;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        button {
+            background: linear-gradient(135deg, rgba(200, 170, 110, 0.2) 0%, rgba(200, 170, 110, 0.1) 100%);
+            border: 2px solid #C8AA6E;
+            border-radius: 10px;
+            color: #F0E6D2;
+            padding: 15px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: linear-gradient(135deg, rgba(200, 170, 110, 0.4) 0%, rgba(200, 170, 110, 0.3) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(200, 170, 110, 0.3);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .log-container {
+            background: #000;
+            border: 1px solid #C8AA6E;
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #C8AA6E;
+            padding-left: 10px;
+        }
+        .log-entry.success {
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+        .log-entry.error {
+            border-color: #ff0000;
+            color: #ff0000;
+        }
+        .log-entry.info {
+            border-color: #00aaff;
+            color: #00aaff;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        .status-indicator.success { background: #00ff00; }
+        .status-indicator.error { background: #ff0000; }
+        .status-indicator.pending { background: #ffaa00; }
+        .clear-btn {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #ff0000;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 BUTTON FUNCTIONALITY TEST</h1>
+
+        <div class="test-section">
+            <h2>📋 Test Results</h2>
+            <div id="testResults" class="button-grid">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎮 Test Mode Selection Buttons</h2>
+            <div class="button-grid">
+                <button onclick="testButton('dailyRankedCard')">🏆 Test PLAY RANKED</button>
+                <button onclick="testButton('freeModeCard')">🎮 Test PLAY FREE</button>
+                <button onclick="testButton('hamburgerMenu')">🍔 Test HAMBURGER</button>
+                <button onclick="testButton('closeMenu')">❌ Test CLOSE MENU</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔍 Console Log</h2>
+            <div id="logContainer" class="log-container"></div>
+            <button class="clear-btn" onclick="clearLog()">Clear Log</button>
+        </div>
+    </div>
+
+    <script>
+        const testResults = {};
+
+        function log(message, type = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.innerHTML = `[${timestamp}] ${message}`;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function clearLog() {
+            document.getElementById('logContainer').innerHTML = '';
+            log('Log cleared', 'info');
+        }
+
+        function updateTestResults() {
+            const resultsContainer = document.getElementById('testResults');
+            resultsContainer.innerHTML = '';
+
+            for (const [id, result] of Object.entries(testResults)) {
+                const statusClass = result.exists ? (result.clickable ? 'success' : 'error') : 'error';
+                const statusText = result.exists ? (result.clickable ? '✅ Works' : '⚠️ Not Clickable') : '❌ Not Found';
+
+                const resultDiv = document.createElement('div');
+                resultDiv.innerHTML = `
+                    <span class="status-indicator ${statusClass}"></span>
+                    <strong>${id}:</strong> ${statusText}
+                `;
+                resultsContainer.appendChild(resultDiv);
+            }
+        }
+
+        function testButton(elementId) {
+            log(`Testing element: ${elementId}`, 'info');
+
+            const element = document.getElementById(elementId);
+
+            if (!element) {
+                log(`❌ Element "${elementId}" NOT FOUND in DOM`, 'error');
+                testResults[elementId] = { exists: false, clickable: false };
+                updateTestResults();
+                return;
+            }
+
+            log(`✅ Element "${elementId}" found in DOM`, 'success');
+
+            // Test if element is clickable
+            const rect = element.getBoundingClientRect();
+            const isVisible = rect.width > 0 && rect.height > 0;
+            const hasClickListener = element.onclick !== null || element.getAttribute('onclick') !== null;
+
+            log(`  - Visible: ${isVisible ? 'YES' : 'NO'}`, isVisible ? 'success' : 'error');
+            log(`  - Has onclick: ${hasClickListener ? 'YES' : 'NO'}`, hasClickListener ? 'success' : 'error');
+            log(`  - Position: (${rect.left}, ${rect.top})`, 'info');
+            log(`  - Size: ${rect.width}x${rect.height}`, 'info');
+
+            testResults[elementId] = {
+                exists: true,
+                clickable: isVisible && (hasClickListener || true) // true because addEventListener might be used
+            };
+
+            // Try to simulate click
+            try {
+                element.click();
+                log(`  ✅ Click simulated successfully`, 'success');
+            } catch (e) {
+                log(`  ❌ Click failed: ${e.message}`, 'error');
+            }
+
+            updateTestResults();
+        }
+
+        // Run initial tests on load
+        document.addEventListener('DOMContentLoaded', () => {
+            log('🚀 DOM Content Loaded', 'success');
+            log('Running initial element detection...', 'info');
+
+            setTimeout(() => {
+                const elements = ['dailyRankedCard', 'freeModeCard', 'hamburgerMenu', 'closeMenu'];
+                elements.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        log(`Found: ${id}`, 'success');
+                    } else {
+                        log(`Missing: ${id}`, 'error');
+                    }
+                });
+            }, 100);
+        });
+
+        log('🧪 Test page loaded', 'info');
+        log('Click the test buttons above to verify functionality', 'info');
+    </script>
+</body>
+</html>

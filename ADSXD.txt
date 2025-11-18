@@ -1,0 +1,43 @@
+Copie y pegue el código de AdSense entre las etiquetas <head></head> de su sitio
+Coloque este código en todas las páginas de su sitio y Google mostrará automáticamente anuncios donde resulte más adecuado para usted
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7982216026691433"
+     crossorigin="anonymous"></script>
+
+
+
+
+
+anuncios graficos
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7982216026691433"
+     crossorigin="anonymous"></script>
+<!-- Anuncio grafico -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-7982216026691433"
+     data-ad-slot="7172814982"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+
+
+
+
+in article
+
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7982216026691433"
+     crossorigin="anonymous"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-7982216026691433"
+     data-ad-slot="2575094426"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>

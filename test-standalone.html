@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Standalone - Con Elementos Reales</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0a1628 0%, #1a2332 100%);
+            color: #F0E6D2;
+            padding: 40px;
+            margin: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #C8AA6E;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .mode-selection-screen {
+            display: block;
+        }
+        .mode-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        .mode-card {
+            background: rgba(1, 10, 19, 0.95);
+            border: 2px solid rgba(200, 170, 110, 0.3);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .mode-card:hover {
+            transform: translateY(-10px);
+            border-color: #C8AA6E;
+            box-shadow: 0 15px 50px rgba(200, 170, 110, 0.3);
+        }
+        .mode-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+        .mode-card h2 {
+            font-size: 2rem;
+            color: #F0E6D2;
+            margin-bottom: 15px;
+        }
+        .mode-card p {
+            color: #A09B8C;
+            margin-bottom: 25px;
+        }
+        .mode-btn {
+            background: linear-gradient(135deg, rgba(200, 170, 110, 0.3), rgba(200, 170, 110, 0.2));
+            border: 2px solid #C8AA6E;
+            border-radius: 12px;
+            color: #F0E6D2;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .mode-btn:hover {
+            background: linear-gradient(135deg, rgba(200, 170, 110, 0.5), rgba(200, 170, 110, 0.4));
+            transform: scale(1.05);
+        }
+        .log-container {
+            background: #000;
+            border: 2px solid #C8AA6E;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 40px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px 10px;
+            border-left: 3px solid #C8AA6E;
+        }
+        .log-entry.success { border-color: #00ff00; color: #00ff00; }
+        .log-entry.error { border-color: #ff0000; color: #ff0000; }
+        .log-entry.info { border-color: #00aaff; color: #00aaff; }
+        .status-box {
+            background: rgba(0, 255, 0, 0.1);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+        .status-box.error {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: #ff0000;
+        }
+        .status-box h3 {
+            margin-top: 0;
+            color: #00ff00;
+        }
+        .status-box.error h3 {
+            color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 TEST STANDALONE - Elementos Reales Incluidos</h1>
+
+        <!-- ESTOS SON LOS ELEMENTOS REALES DE TU SITIO -->
+        <div class="mode-selection-screen" id="modeSelectionScreen">
+            <div class="mode-options">
+                <div class="mode-card daily-ranked-card" id="dailyRankedCard">
+                    <div class="mode-icon">🏆</div>
+                    <h2>DAILY RANKEDS</h2>
+                    <p>Compete in today's challenges and climb the leaderboard!</p>
+                    <button class="mode-btn">PLAY RANKED</button>
+                </div>
+                <div class="mode-card free-mode-card" id="freeModeCard">
+                    <div class="mode-icon">🎮</div>
+                    <h2>FREE MODE</h2>
+                    <p>Practice and play any game mode without limits</p>
+                    <button class="mode-btn">PLAY FREE</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATUS BOX -->
+        <div id="statusBox" class="status-box">
+            <h3 id="statusTitle">Esperando clicks...</h3>
+            <p id="statusMessage"></p>
+        </div>
+
+        <!-- LOG CONTAINER -->
+        <div class="log-container" id="logContainer">
+            <div class="log-entry info">Página cargada. Esperando DOMContentLoaded...</div>
+        </div>
+    </div>
+
+    <!-- SIMULATION OF init-fix.js -->
+    <script>
+        function log(message, type = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.innerHTML = `[${timestamp}] ${message}`;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function showStatus(title, message, isError = false) {
+            const statusBox = document.getElementById('statusBox');
+            const statusTitle = document.getElementById('statusTitle');
+            const statusMessage = document.getElementById('statusMessage');
+
+            statusBox.style.display = 'block';
+            statusBox.className = `status-box ${isError ? 'error' : ''}`;
+            statusTitle.textContent = title;
+            statusMessage.textContent = message;
+        }
+
+        // Mock functions
+        function showDailyRotation() {
+            log('✅ showDailyRotation() called successfully!', 'success');
+            showStatus(
+                '✅ PLAY RANKED FUNCIONA!',
+                'El botón Daily Ranked está funcionando correctamente. La función showDailyRotation() fue llamada.'
+            );
+        }
+
+        function showFreeMode() {
+            log('✅ showFreeMode() called successfully!', 'success');
+            showStatus(
+                '✅ PLAY FREE FUNCIONA!',
+                'El botón Free Mode está funcionando correctamente. La función showFreeMode() fue llamada.'
+            );
+        }
+
+        // EXACT SAME CODE AS init-fix.js
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 INIT-FIX: DOM Content Loaded', 'success');
+
+            window.initializeAllElements = function() {
+                log('🔧 INIT-FIX: Initializing all elements...', 'info');
+
+                // Mode selection elements
+                window.modeSelectionScreen = document.getElementById('modeSelectionScreen');
+                window.dailyRotationScreen = document.getElementById('dailyRotationScreen');
+                window.dailyRankedCard = document.getElementById('dailyRankedCard');
+                window.freeModeCard = document.getElementById('freeModeCard');
+
+                log(`Mode selection elements found:`, 'info');
+                log(`  - modeSelectionScreen: ${window.modeSelectionScreen ? '✅' : '❌'}`, window.modeSelectionScreen ? 'success' : 'error');
+                log(`  - dailyRankedCard: ${window.dailyRankedCard ? '✅' : '❌'}`, window.dailyRankedCard ? 'success' : 'error');
+                log(`  - freeModeCard: ${window.freeModeCard ? '✅' : '❌'}`, window.freeModeCard ? 'success' : 'error');
+
+                // Attach click events to mode cards
+                if (window.dailyRankedCard) {
+                    window.dailyRankedCard.onclick = function(e) {
+                        log('🎮 INIT-FIX: Daily Ranked clicked!', 'info');
+                        if (typeof showDailyRotation === 'function') {
+                            showDailyRotation();
+                        } else {
+                            log('❌ showDailyRotation function not found', 'error');
+                            showStatus(
+                                '❌ ERROR',
+                                'La función showDailyRotation() no existe',
+                                true
+                            );
+                        }
+                    };
+                    log('✅ INIT-FIX: Daily Ranked card onclick attached', 'success');
+                } else {
+                    log('❌ INIT-FIX: dailyRankedCard not found in DOM', 'error');
+                }
+
+                if (window.freeModeCard) {
+                    window.freeModeCard.onclick = function(e) {
+                        log('🎮 INIT-FIX: Free Mode clicked!', 'info');
+                        if (typeof showFreeMode === 'function') {
+                            showFreeMode();
+                        } else {
+                            log('❌ showFreeMode function not found', 'error');
+                            showStatus(
+                                '❌ ERROR',
+                                'La función showFreeMode() no existe',
+                                true
+                            );
+                        }
+                    };
+                    log('✅ INIT-FIX: Free Mode card onclick attached', 'success');
+                } else {
+                    log('❌ INIT-FIX: freeModeCard not found in DOM', 'error');
+                }
+
+                return true;
+            };
+
+            // Run initialization with delay
+            setTimeout(function() {
+                const result = window.initializeAllElements();
+                log('✅ INIT-FIX: All elements initialized', 'success');
+                log('👆 Ahora haz click en los botones arriba', 'info');
+            }, 100);
+        });
+
+        log('📝 Script loaded', 'info');
+    </script>
+</body>
+</html>
