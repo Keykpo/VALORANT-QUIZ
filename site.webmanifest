@@ -1,11 +1,11 @@
 {
-  "name": "LOL Quiz Games - League of Legends Quizzes & Trivia",
-  "short_name": "LOL Quiz",
-  "description": "Play the best League of Legends quiz games including LoLdle, Smash or Pass, Champion guessing games, and esports trivia",
+  "name": "VALORANT Quiz Games - Agent Quizzes & Trivia",
+  "short_name": "VALORANT Quiz",
+  "description": "Play the best VALORANT quiz games including Smash or Pass, Agent guessing games, weapon quiz, and map trivia",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a1428",
-  "theme_color": "#0a1428",
+  "background_color": "#0F1923",
+  "theme_color": "#FF4655",
   "orientation": "portrait-primary",
   "icons": [
     {
