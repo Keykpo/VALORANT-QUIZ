@@ -325,6 +325,12 @@ function startGameMode(mode) {
 
     // Start appropriate game mode
     switch (mode) {
+        case 'daily-ranked':
+            startDailyRanked();
+            break;
+        case 'ranking':
+            showRanking();
+            break;
         case 'smash-or-pass-agents':
             startSmashOrPassAgents();
             break;
@@ -663,7 +669,7 @@ function loadNextAgentQuestion() {
     gameState.attempts = 0;
     gameState.currentQuestionIndex++;
 
-    // Display agent portrait (zoomed or obscured for challenge)
+    // Display agent portrait (blurred for challenge)
     document.getElementById('agentPortrait').src = randomAgent.displayIcon;
     document.getElementById('agentGuessInput').value = '';
     document.getElementById('agentGuessInput').disabled = false;
@@ -674,6 +680,9 @@ function loadNextAgentQuestion() {
     document.getElementById('agentResult').className = 'result-message';
     document.getElementById('restartAgentBtn').style.display = 'none';
     document.getElementById('agentTotal').textContent = gameState.currentQuestionIndex;
+
+    // Apply initial blur effect
+    applyBlurEffect(0);
 }
 
 function checkAgentGuess() {
@@ -683,6 +692,9 @@ function checkAgentGuess() {
 
     gameState.attempts++;
     document.getElementById('agentAttempts').textContent = gameState.attempts;
+
+    // Update blur effect (image gets clearer with each attempt)
+    applyBlurEffect(gameState.attempts);
 
     // Add attempt to list
     const attemptsList = document.getElementById('agentAttemptsList');
@@ -700,6 +712,8 @@ function checkAgentGuess() {
         document.getElementById('restartAgentBtn').style.display = 'block';
         document.getElementById('agentGuessInput').disabled = true;
         document.getElementById('agentGuessBtn').disabled = true;
+        // Remove blur on correct answer
+        applyBlurEffect(6);
     } else if (gameState.attempts >= gameState.maxAttempts) {
         // Out of attempts
         document.getElementById('agentResult').textContent = `✗ The answer was ${gameState.currentAnswer}`;
@@ -707,6 +721,8 @@ function checkAgentGuess() {
         document.getElementById('restartAgentBtn').style.display = 'block';
         document.getElementById('agentGuessInput').disabled = true;
         document.getElementById('agentGuessBtn').disabled = true;
+        // Remove blur on game over
+        applyBlurEffect(6);
     }
 
     document.getElementById('agentGuessInput').value = '';
@@ -954,8 +970,404 @@ function shuffleArray(array) {
 }
 
 // ========================================
+// DAILY RANKED SYSTEM
+// ========================================
+
+const VALORANT_RANKS = [
+    { name: 'Radiant', minScore: 950, icon: '⭐', color: 'rank-radiant', emoji: '🌟' },
+    { name: 'Immortal', minScore: 850, icon: '💎', color: 'rank-immortal', emoji: '💎' },
+    { name: 'Ascendant', minScore: 750, icon: '🔺', color: 'rank-ascendant', emoji: '🔺' },
+    { name: 'Diamond', minScore: 650, icon: '💠', color: 'rank-diamond', emoji: '💠' },
+    { name: 'Platinum', minScore: 550, icon: '🔷', color: 'rank-platinum', emoji: '🔷' },
+    { name: 'Gold', minScore: 450, icon: '🟡', color: 'rank-gold', emoji: '🟡' },
+    { name: 'Silver', minScore: 350, icon: '⚪', color: 'rank-silver', emoji: '⚪' },
+    { name: 'Bronze', minScore: 250, icon: '🟤', color: 'rank-bronze', emoji: '🟤' },
+    { name: 'Iron', minScore: 0, icon: '⚫', color: 'rank-iron', emoji: '⚫' }
+];
+
+const DAILY_MODES = [
+    { id: 'guess-ability', name: 'Guess by Ability', description: 'Identify agent by ability', maxScore: 300 },
+    { id: 'guess-quote', name: 'Guess by Quote', description: 'Identify agent by quote', maxScore: 300 },
+    { id: 'guess-agent', name: 'Guess the Agent', description: 'Identify the agent', maxScore: 300 },
+    { id: 'weapon-quiz', name: 'Weapon Quiz', description: 'Identify weapons', maxScore: 250 },
+    { id: 'map-quiz', name: 'Map Quiz', description: 'Identify maps', maxScore: 250 }
+];
+
+let dailyRankedState = {
+    currentDate: null,
+    todaysChallenges: [],
+    currentChallengeIndex: 0,
+    totalScore: 0,
+    challengeScores: [],
+    hasPlayedToday: false,
+    viewingDate: null
+};
+
+// Get date string (YYYY-MM-DD)
+function getDateString(date = new Date()) {
+    return date.toISOString().split('T')[0];
+}
+
+// Seeded random for consistent daily rotation
+function seededRandom(seed) {
+    const x = Math.sin(seed++) * 10000;
+    return x - Math.floor(x);
+}
+
+// Get today's challenges (same for everyone, changes daily)
+function getDailyChallenges(dateString) {
+    const seed = dateString.split('-').reduce((acc, val) => acc + parseInt(val), 0);
+    const shuffled = [...DAILY_MODES];
+
+    // Fisher-Yates shuffle with seed
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(seededRandom(seed + i) * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    return shuffled.slice(0, 4); // Return 4 random modes
+}
+
+// Get rank from score
+function getRankFromScore(score) {
+    for (const rank of VALORANT_RANKS) {
+        if (score >= rank.minScore) {
+            return rank;
+        }
+    }
+    return VALORANT_RANKS[VALORANT_RANKS.length - 1];
+}
+
+// Check if user has played today
+function hasPlayedToday() {
+    const today = getDateString();
+    const lastPlayed = localStorage.getItem('lastDailyPlay');
+    return lastPlayed === today;
+}
+
+// Save daily play
+function saveDailyPlay(score) {
+    const today = getDateString();
+    localStorage.setItem('lastDailyPlay', today);
+    localStorage.setItem('todayScore', score.toString());
+}
+
+// Get today's score
+function getTodayScore() {
+    const today = getDateString();
+    const lastPlayed = localStorage.getItem('lastDailyPlay');
+    if (lastPlayed === today) {
+        return parseInt(localStorage.getItem('todayScore') || '0');
+    }
+    return 0;
+}
+
+// Start Daily Ranked
+function startDailyRanked() {
+    hideAllContainers();
+    document.getElementById('dailyRankedContainer').style.display = 'block';
+
+    const today = getDateString();
+    dailyRankedState.currentDate = today;
+    dailyRankedState.todaysChallenges = getDailyChallenges(today);
+    dailyRankedState.hasPlayedToday = hasPlayedToday();
+
+    // Display today's date
+    const dateObj = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('dailyDate').textContent = dateObj.toLocaleDateString('en-US', options);
+
+    // Display challenges
+    const challengesList = document.getElementById('challengesList');
+    challengesList.innerHTML = '';
+    dailyRankedState.todaysChallenges.forEach((challenge, index) => {
+        const item = document.createElement('div');
+        item.className = 'challenge-item';
+        item.innerHTML = `
+            <div class="challenge-number">${index + 1}</div>
+            <div class="challenge-info">
+                <div class="challenge-mode-name">${challenge.name}</div>
+                <div class="challenge-description">${challenge.description}</div>
+            </div>
+        `;
+        challengesList.appendChild(item);
+    });
+
+    // Show appropriate section
+    if (dailyRankedState.hasPlayedToday) {
+        document.getElementById('dailyChallenges').style.display = 'none';
+        document.getElementById('dailyStartSection').style.display = 'none';
+        document.getElementById('alreadyPlayed').style.display = 'block';
+
+        const score = getTodayScore();
+        const rank = getRankFromScore(score);
+        document.getElementById('yourTodayScore').textContent = score;
+        document.getElementById('yourRankIcon').innerHTML = rank.emoji;
+        document.getElementById('yourRankIcon').className = `rank-icon ${rank.color}`;
+        document.getElementById('yourRankName').textContent = rank.name;
+        document.getElementById('yourRankName').className = `rank-name ${rank.color}`;
+    } else {
+        document.getElementById('dailyChallenges').style.display = 'block';
+        document.getElementById('dailyStartSection').style.display = 'block';
+        document.getElementById('alreadyPlayed').style.display = 'none';
+    }
+
+    // Event listeners
+    document.getElementById('startDailyBtn').onclick = () => beginDailyRun();
+    document.getElementById('viewRankingBtn').onclick = () => showRanking();
+}
+
+// Begin daily run
+function beginDailyRun() {
+    dailyRankedState.currentChallengeIndex = 0;
+    dailyRankedState.totalScore = 0;
+    dailyRankedState.challengeScores = [];
+
+    document.getElementById('dailyChallenges').style.display = 'none';
+    document.getElementById('dailyStartSection').style.display = 'none';
+    document.getElementById('dailyProgressSection').style.display = 'block';
+
+    loadDailyChallenge();
+}
+
+// Load daily challenge
+function loadDailyChallenge() {
+    const challenge = dailyRankedState.todaysChallenges[dailyRankedState.currentChallengeIndex];
+
+    document.getElementById('currentChallenge').textContent = dailyRankedState.currentChallengeIndex + 1;
+    document.getElementById('dailyScore').textContent = dailyRankedState.totalScore;
+    document.getElementById('currentChallengeName').textContent = challenge.name;
+
+    // Start the specific challenge mode
+    gameState.dailyMode = true;
+    gameState.dailyMaxScore = challenge.maxScore;
+    startGameMode(challenge.id);
+}
+
+// Complete daily challenge
+function completeDailyChallenge(score) {
+    dailyRankedState.challengeScores.push(score);
+    dailyRankedState.totalScore += score;
+    dailyRankedState.currentChallengeIndex++;
+
+    if (dailyRankedState.currentChallengeIndex < dailyRankedState.todaysChallenges.length) {
+        // Next challenge
+        setTimeout(() => {
+            hideAllContainers();
+            document.getElementById('dailyRankedContainer').style.display = 'block';
+            document.getElementById('dailyProgressSection').style.display = 'block';
+            loadDailyChallenge();
+        }, 2000);
+    } else {
+        // All challenges complete
+        setTimeout(() => {
+            showDailyComplete();
+        }, 2000);
+    }
+}
+
+// Show daily complete
+function showDailyComplete() {
+    hideAllContainers();
+    document.getElementById('dailyRankedContainer').style.display = 'block';
+    document.getElementById('dailyProgressSection').style.display = 'none';
+    document.getElementById('dailyCompleteSection').style.display = 'block';
+
+    const finalScore = dailyRankedState.totalScore;
+    const rank = getRankFromScore(finalScore);
+
+    document.getElementById('finalDailyScore').textContent = finalScore;
+    document.getElementById('finalRankIcon').innerHTML = rank.emoji;
+    document.getElementById('finalRankIcon').className = `rank-icon-large ${rank.color}`;
+    document.getElementById('finalRankName').textContent = rank.name;
+    document.getElementById('finalRankName').className = `rank-name-large ${rank.color}`;
+
+    // Save play
+    saveDailyPlay(finalScore);
+
+    // Event listeners
+    document.getElementById('submitScoreBtn').onclick = () => submitScore();
+    document.getElementById('viewRankingFromCompleteBtn').onclick = () => showRanking();
+}
+
+// Submit score to ranking
+async function submitScore() {
+    const username = document.getElementById('usernameInput').value.trim();
+
+    if (!username) {
+        alert('Please enter a username');
+        return;
+    }
+
+    if (username.length < 2) {
+        alert('Username must be at least 2 characters');
+        return;
+    }
+
+    const score = dailyRankedState.totalScore;
+    const rank = getRankFromScore(score);
+    const today = getDateString();
+
+    try {
+        // Save to Firebase
+        const scoreRef = database.ref(`rankings/${today}`).push();
+        await scoreRef.set({
+            username: username,
+            score: score,
+            rank: rank.name,
+            timestamp: Date.now()
+        });
+
+        alert('Score submitted successfully!');
+        showRanking();
+    } catch (error) {
+        console.error('Error submitting score:', error);
+        // Fallback to localStorage if Firebase fails
+        saveToLocalStorage(username, score, rank, today);
+        alert('Score saved locally!');
+        showRanking();
+    }
+}
+
+// Fallback: Save to localStorage
+function saveToLocalStorage(username, score, rank, date) {
+    const key = `ranking_${date}`;
+    let rankings = JSON.parse(localStorage.getItem(key) || '[]');
+    rankings.push({
+        username: username,
+        score: score,
+        rank: rank.name,
+        timestamp: Date.now()
+    });
+    rankings.sort((a, b) => b.score - a.score);
+    localStorage.setItem(key, JSON.stringify(rankings));
+}
+
+// Show ranking
+async function showRanking(date = null) {
+    hideAllContainers();
+    document.getElementById('rankingContainer').style.display = 'block';
+
+    const viewDate = date || getDateString();
+    dailyRankedState.viewingDate = viewDate;
+
+    // Display date
+    const dateObj = new Date(viewDate);
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('rankingCurrentDate').textContent = dateObj.toLocaleDateString('en-US', options);
+
+    // Load rankings
+    try {
+        const snapshot = await database.ref(`rankings/${viewDate}`).once('value');
+        const rankings = [];
+
+        snapshot.forEach((childSnapshot) => {
+            rankings.push(childSnapshot.val());
+        });
+
+        rankings.sort((a, b) => b.score - a.score);
+        displayRankings(rankings);
+    } catch (error) {
+        console.error('Error loading rankings:', error);
+        // Fallback to localStorage
+        const key = `ranking_${viewDate}`;
+        const rankings = JSON.parse(localStorage.getItem(key) || '[]');
+        displayRankings(rankings);
+    }
+
+    // Event listeners
+    document.getElementById('prevDateBtn').onclick = () => navigateDate(-1);
+    document.getElementById('nextDateBtn').onclick = () => navigateDate(1);
+    document.getElementById('backToMenuBtn').onclick = () => {
+        hideAllContainers();
+        document.getElementById('homeContainer').style.display = 'block';
+    };
+
+    // Disable next button if viewing today
+    const today = getDateString();
+    document.getElementById('nextDateBtn').disabled = viewDate === today;
+}
+
+// Display rankings
+function displayRankings(rankings) {
+    const list = document.getElementById('rankingList');
+
+    if (rankings.length === 0) {
+        list.innerHTML = '<div class="no-scores"><p>No scores yet for this day</p></div>';
+        return;
+    }
+
+    list.innerHTML = '';
+    rankings.forEach((entry, index) => {
+        const rank = getRankFromScore(entry.score);
+        const row = document.createElement('div');
+        row.className = 'ranking-row';
+        row.innerHTML = `
+            <div class="rank-col">#${index + 1}</div>
+            <div class="player-col">${entry.username}</div>
+            <div class="score-col">${entry.score}</div>
+            <div class="tier-col">
+                <span class="tier-icon ${rank.color}">${rank.emoji}</span>
+                <span class="tier-name ${rank.color}">${rank.name}</span>
+            </div>
+        `;
+        list.appendChild(row);
+    });
+}
+
+// Navigate dates
+function navigateDate(days) {
+    const currentDate = new Date(dailyRankedState.viewingDate);
+    currentDate.setDate(currentDate.getDate() + days);
+    const newDate = getDateString(currentDate);
+
+    // Don't go into the future
+    const today = getDateString();
+    if (newDate > today) return;
+
+    showRanking(newDate);
+}
+
+// ========================================
+// BLUR EFFECT FOR GUESS THE AGENT
+// ========================================
+
+function applyBlurEffect(attempts) {
+    const maxAttempts = 6;
+    const minBlur = 0;
+    const maxBlur = 20;
+
+    // Calculate blur amount (decreases with attempts)
+    const blurAmount = maxBlur - (attempts / maxAttempts) * maxBlur;
+
+    const img = document.getElementById('agentPortrait');
+    if (img) {
+        img.style.filter = `blur(${blurAmount}px)`;
+        img.style.transition = 'filter 0.3s ease';
+    }
+}
+
+// ========================================
+// UPDATE GAME MODES FOR DAILY RANKED
+// ========================================
+
+// Override hideAllContainers to include new containers
+const originalHideAllContainers = hideAllContainers;
+function hideAllContainers() {
+    originalHideAllContainers();
+    const newContainers = ['dailyRankedContainer', 'rankingContainer'];
+    newContainers.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+}
+
+// ========================================
 // EXPORT FOR DEBUGGING
 // ========================================
 
 window.gameState = gameState;
 window.startGameMode = startGameMode;
+window.dailyRankedState = dailyRankedState;
+window.startDailyRanked = startDailyRanked;
+window.showRanking = showRanking;
