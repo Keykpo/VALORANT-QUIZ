@@ -303,6 +303,10 @@ function initializeUI() {
             }
         });
     });
+
+    // Show hero logo on home screen
+    const heroLogo = document.getElementById('heroLogo');
+    if (heroLogo) heroLogo.parentElement.style.display = 'flex';
 }
 
 // ========================================
@@ -1281,6 +1285,8 @@ async function showRanking(date = null) {
     document.getElementById('backToMenuBtn').onclick = () => {
         hideAllContainers();
         document.getElementById('homeContainer').style.display = 'block';
+        const heroLogo = document.getElementById('heroLogo');
+        if (heroLogo) heroLogo.parentElement.style.display = 'flex';
     };
 
     // Disable next button if viewing today
@@ -1360,6 +1366,9 @@ function hideAllContainers() {
         const el = document.getElementById(id);
         if (el) el.style.display = 'none';
     });
+    // Hide logo when not on home
+    const heroLogo = document.getElementById('heroLogo');
+    if (heroLogo) heroLogo.parentElement.style.display = 'none';
 }
 
 // ========================================
